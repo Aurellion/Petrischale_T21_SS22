@@ -33,19 +33,40 @@ namespace Petrischale
         private void animate(object sender, EventArgs e)
         {
             Zeichenfläche.Children.Clear();
-            Zoo.ForEach( x => {x.Move(); x.Draw(Zeichenfläche); });
             List<Einzeller> Kindergarten = new List<Einzeller>();
+            List<Einzeller> Futter = new List<Einzeller>();
             foreach (Einzeller item in Zoo)
             {
-                Kindergarten.AddRange(item.Teilen());
+                if (item is Bakterie)
+                {
+                    Futter.Add(item);
+                }
+            }
+            Zoo.ForEach( x => 
+            {
+                x.Move();
+                x.Draw(Zeichenfläche);
+                Kindergarten.AddRange(x.Teilen());
+                x.Sterben();
+            });
+            foreach (Einzeller itemAmöbe in Zoo)
+            {
+                if (itemAmöbe is Amöbe)
+                {
+                    foreach (Bakterie itemBakterie in Futter)
+                    {
+                        itemAmöbe.Fressen(itemBakterie);
+                    }
+                }               
             }
             Zoo.AddRange(Kindergarten);
+            Zoo.RemoveAll(x => x.istTot);
         }
 
         private void btn_Start_Click(object sender, RoutedEventArgs e)
         {
             timer.Start();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 20; i++)
             {
                 Zoo.Add(new Bakterie(Zeichenfläche));
                 Zoo.Add(new Amöbe(Zeichenfläche));
