@@ -65,6 +65,7 @@ namespace Petrischale
 
         private void btn_Start_Click(object sender, RoutedEventArgs e)
         {
+            btn_Start.IsEnabled = false;
             timer.Start();
             for (int i = 0; i < 20; i++)
             {
@@ -72,6 +73,20 @@ namespace Petrischale
                 Zoo.Add(new Amöbe(Zeichenfläche));
             }
             
+        }
+
+        private void Window_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Amöbe a = new Amöbe(Zeichenfläche);
+            a.Positionieren(e.GetPosition(Zeichenfläche).X, e.GetPosition(Zeichenfläche).Y);
+            Zoo.Add(a);
+        }
+
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Bakterie a = new Bakterie(Zeichenfläche);
+            a.Positionieren(e.GetPosition(Zeichenfläche).X, e.GetPosition(Zeichenfläche).Y);
+            Zoo.Add(a);
         }
     }
 }

@@ -11,8 +11,8 @@ namespace Petrischale
 {
     abstract class Einzeller
     {
-        public int posX { get; private set; }
-        public int posY { get; private set; }
+        public double posX { get; protected set; }
+        public double posY { get; protected set; }
         public bool istTot { get; protected set; }
 
         static protected Random rnd = new Random();
@@ -37,6 +37,7 @@ namespace Petrischale
             e.Height = ez.e.Height;
             e.Fill = ez.e.Fill;
         }
+
 
         public void Draw(Canvas Zeichenfläche)
         {
@@ -89,16 +90,30 @@ namespace Petrischale
         }
 
         public override void Fressen(Bakterie b) { }
+
+        public void Positionieren(double x, double y)
+        {
+            posX = x;
+            posY = y;
+        }
     }
 
     class Amöbe : Einzeller
     {
-        public Amöbe(Canvas zeichenfläche) : base(zeichenfläche, 10, Brushes.Red) { }
-        public Amöbe(Amöbe b) : base(b) { }
+        public bool hatgefressen { get; private set; }
+        public Amöbe(Canvas zeichenfläche) : base(zeichenfläche, 10, Brushes.Red)
+        {
+            hatgefressen = false;
+        }
+        public Amöbe(Amöbe b) : base(b)
+        {
+            hatgefressen = false;
+            this.Färben(Brushes.Red);
+        }
         public override List<Einzeller> Teilen()
         {
             List<Einzeller> töchter = new List<Einzeller>();
-            if (rnd.NextDouble() < 0.02)
+            if (rnd.NextDouble() < 0.2 && hatgefressen)
             {
                 töchter.Add(new Amöbe(this));
             }
@@ -120,11 +135,18 @@ namespace Petrischale
         public override void Fressen(Bakterie futter)
         {
             double Abstand = Math.Sqrt(Math.Pow(posX-futter.posX, 2)+Math.Pow(posY-futter.posY, 2));
-            if (Abstand < 20)
+            if (Abstand < 10)
             {
                 futter.Sterben(true);
                 this.Färben(Brushes.Blue);
+                hatgefressen = true;
             }
+        }
+
+        public void Positionieren(double x, double y)
+        {
+            posX = x;
+            posY = y;
         }
     }
 }
